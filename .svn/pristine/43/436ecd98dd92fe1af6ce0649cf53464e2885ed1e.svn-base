@@ -1,0 +1,480 @@
+/*
+ * Alex Prokopchik
+ * May 11, 2013
+ *PaintPanel.java
+ */
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JPanel;
+
+/**
+ * @author alexpro
+ * @version 1.0
+ */
+@SuppressWarnings("serial")
+public class PaintPanel extends JPanel
+{
+  
+  /** The default size for this JPanel. */
+  private static final Dimension DEFUALT_SIZE = new Dimension(400, 300);
+  
+  /**
+   * The color of the background of the panel.
+   */
+  private static final Color FOREGROUND_COLOR = Color.WHITE;
+  
+  /**
+   * The horizontal size of each grid box.
+   */
+  private static final int GRID_X = 10;
+  
+  /**
+   * The horizontal size of each grid box.
+   */
+  private static final int GRID_Y = 10;
+  
+  /**
+   * The integer that represents pencil shape.
+   */
+  private static final int SHAPE_PENCIL = 1;
+  
+  /**
+   * The integer that represents line shape.
+   */
+  private static final int SHAPE_LINE = 2;
+  
+  /**
+   * The integer that represents rectangle shape.
+   */
+  private static final int SHAPE_RECT = 3;
+  
+  /**
+   * The integer that represents oval shape.
+   */
+  private static final int SHAPE_OVAL = 4;
+  
+  
+  
+  /**
+   * The color to paint with.
+   */
+  private Color my_color;
+  
+  /**
+   * The thickness of the drawings.
+   */
+  private int my_thickness;
+  
+  /**
+   * The x coord of the init. pos.
+   */
+  private int my_old_x;
+  
+  /**
+   * The y coord of the init. pos.
+   */
+  private int my_old_y;
+  
+  /**
+   * The x coord of the final pos.
+   */
+  private int my_current_x;
+  
+  /**
+   * The y coord of the final pos.
+   */
+  private int my_current_y;
+  
+  /**
+   * The x coord of the initial pos. of the array of pencil lines.
+   */
+  private List<Shape> my_shape_list = new ArrayList<Shape>();
+  
+  /**
+   * The x coord of the initial pos. of the array of pencil lines.
+   */
+  private final List<Integer> my_pencil_x = new ArrayList<Integer>();
+  
+  
+  /**
+   * The y coord of the initial pos. of the array of pencil lines.
+   */
+  private final List<Integer> my_pencil_y = new ArrayList<Integer>();
+  
+  /**
+   * The x coord of the initial pos. of the rectangle and circle.
+   */
+  private int my_rectcirc_x;
+  
+  /**
+   * The y coord of the initial pos. of the rectangle and circle.
+   */
+  private int my_rectcirc_y;
+  
+  /**
+   * The x coord of the final pos. of the rectangle and circle.
+   */
+  private int my_rectcirc_x2;
+  
+  /**
+   * The y coord of the final pos. of the rectangle and circle.
+   */
+  private int my_rectcirc_y2;
+
+  /**
+   * The x coord of the initial pos. of the line.
+   */
+  private int my_line_x;
+
+  /**
+   * The y coord of the initial pos. of the line.
+   */
+  private int my_line_y;
+
+  /**
+   * The x coord of the final pos. of the line.
+   */
+  private int my_line_x2;
+
+  /**
+   * The y coord of the final pos. of the line.
+   */
+  private int my_line_y2;
+  
+  /**
+   * A boolean for pencil that determines the shape.
+   */
+  private boolean my_pencil;
+  
+  /**
+   * A boolean for line that determines the shape.
+   */
+  private boolean my_line;
+  
+  /**
+   * A boolean for rectangle that determines the shape.
+   */
+  private boolean my_rectangle;
+  
+  /**
+   * A boolean for ellipse that determines the shape.
+   */
+  private boolean my_ellipse;
+  
+  /**
+   * A boolean for grid that determines if button is pressed.
+   */
+  private boolean my_grid;
+
+  /**
+   * Construct this JPanel.
+   */
+  public PaintPanel() 
+  {
+    super();
+    setPreferredSize(DEFUALT_SIZE);
+    setBackground(FOREGROUND_COLOR);
+    addMouseListener(new ActionMouseListener());
+    addMouseMotionListener(new ActionMouseListener());
+    my_pencil = true;
+    my_thickness = 1;  
+  }
+  
+  /**
+   * Sets the color to paint with.
+   * 
+   * @param the_color of the drawings
+   */
+  public void setColor(final Color the_color)
+  {
+    my_color = the_color;
+  }
+
+  /**
+   * Sets the thickness to paint with.
+   * 
+   * @param the_thickness of the drawings
+   */
+  public void setDrawThickness(final int the_thickness)
+  {
+    my_thickness = the_thickness;
+  }
+  
+  /**
+   * Paints the current path.
+   * 
+   * @param the_graphics The graphics context to use for painting.
+   */
+  public void paintComponent(final Graphics the_graphics)
+  {
+    super.paintComponent(the_graphics);
+    final Graphics2D g2d = (Graphics2D) the_graphics;
+    g2d.setStroke(new BasicStroke(my_thickness));
+    g2d.setPaint(my_color);
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    for (int i = 0; i < my_shape_list.size(); i++)
+    {
+      final int shape = my_shape_list.get(i).getShape();
+      if (shape == SHAPE_PENCIL)
+      {
+        g2d.setPaint(my_shape_list.get(i).getColor());
+        g2d.setStroke(new BasicStroke(my_shape_list.get(i).getThickness()));
+        g2d.drawLine(my_shape_list.get(i).getX(), my_shape_list.get(i).getY(),
+                     my_shape_list.get(i).getX1(), my_shape_list.get(i).getY1());
+      }
+      else if (shape == SHAPE_LINE)
+      {
+        g2d.setPaint(my_shape_list.get(i).getColor());
+        g2d.setStroke(new BasicStroke(my_shape_list.get(i).getThickness()));
+        g2d.drawLine(my_shape_list.get(i).getX(), my_shape_list.get(i).getY(),
+                     my_shape_list.get(i).getX1(), my_shape_list.get(i).getY1());
+      }
+      else if (shape == SHAPE_RECT)
+      {
+        g2d.setPaint(my_shape_list.get(i).getColor());
+        g2d.setStroke(new BasicStroke(my_shape_list.get(i).getThickness()));
+        g2d.drawRect(my_shape_list.get(i).getX(), my_shape_list.get(i).getY(),
+                     my_shape_list.get(i).getX1(), my_shape_list.get(i).getY1());
+      }
+      else if (shape == SHAPE_OVAL)
+      {
+        g2d.setPaint(my_shape_list.get(i).getColor());
+        g2d.setStroke(new BasicStroke(my_shape_list.get(i).getThickness()));
+        g2d.drawOval(my_shape_list.get(i).getX(), my_shape_list.get(i).getY(),
+                     my_shape_list.get(i).getX1(), my_shape_list.get(i).getY1());
+      }
+    }
+    
+    g2d.setStroke(new BasicStroke(my_thickness));
+    
+    //draws the pencil
+    if (my_pencil)
+    {
+      drawPencilConfig();
+      for (int i = 0; i < my_pencil_x.size() - 1; i++) 
+      {
+        the_graphics.drawLine(my_pencil_x.get(i), my_pencil_y.get(i), 
+                              my_pencil_x.get(i + 1), my_pencil_y.get(i + 1));
+      }
+    }
+    
+    //draws the line
+    if (my_line)
+    {
+      drawLineConfig();
+      the_graphics.drawLine(my_line_x, my_line_y, my_line_x2, my_line_y2);
+    }
+    
+    //draws the rectangle
+    if (my_rectangle)
+    {
+      drawRectEllipseConfig();
+      the_graphics.drawRect(my_rectcirc_x, my_rectcirc_y, my_rectcirc_x2, my_rectcirc_y2);
+    }
+    
+    //draws the Ellipse
+    if (my_ellipse)
+    {
+      drawRectEllipseConfig();
+      the_graphics.drawOval(my_rectcirc_x, my_rectcirc_y, my_rectcirc_x2, my_rectcirc_y2);
+    }
+    
+  //  draws the Grid
+    if (my_grid)
+    {
+      g2d.setPaint(Color.BLACK);
+      g2d.setStroke(new BasicStroke(1));
+      for (int row = 0; row < getWidth() / GRID_X; row++)
+      {
+        for (int col = 0; col < getHeight() / GRID_Y; col++)
+        {
+          the_graphics.drawRect(row * GRID_X, col * GRID_Y, GRID_X, GRID_Y);
+        }
+      }
+    }
+  }
+  
+  /**
+   * Sets the pencil to be selected.
+   */
+  public void setDrawPencil()
+  { 
+    my_ellipse = false;
+    my_rectangle = false;
+    my_line = false;
+    my_pencil = true;
+  }
+  
+  /**
+   * Sets the conditions for the pencil to draw.
+   */
+  public void drawPencilConfig()
+  {
+    my_pencil_x.add(my_current_x);
+    my_pencil_y.add(my_current_y);
+  }
+  
+  /**
+   * Sets the line to be selected.
+   */
+  public void setDrawLine()
+  {
+    my_ellipse = false;
+    my_rectangle = false;
+    my_line = true;
+    my_pencil = false;
+  }
+  
+  /**
+   * Sets the conditions for the line to draw.
+   */
+  public void drawLineConfig()
+  {
+    my_line_x = my_old_x;
+    my_line_y = my_old_y;
+    my_line_x2 = my_current_x;
+    my_line_y2 = my_current_y;
+  }
+  
+  /**
+   * Sets the rectangle to be selected.
+   */
+  public void setDrawRectangle()
+  {   
+    my_ellipse = false;
+    my_rectangle = true;
+    my_line = false;
+    my_pencil = false;
+  }
+  
+  /**
+   * Sets the conditions for the rectangle and the ellipse to be able to be drawn.
+   */
+  public void drawRectEllipseConfig()
+  {
+    final int width = my_old_x - my_current_x;
+    final int height = my_old_y - my_current_y;
+
+    my_rectcirc_x2 = Math.abs(width);
+    my_rectcirc_y2 = Math.abs(height);
+    if (width < 0)
+    {
+      my_rectcirc_x = my_old_x;
+    }
+    else
+    {
+      my_rectcirc_x = my_current_x;
+    }
+    if (height < 0)
+    {
+      my_rectcirc_y = my_old_y;
+    }
+    else
+    {
+      my_rectcirc_y = my_current_y;
+    }
+  }
+  
+  /**
+   * Sets the ellipse to be selected.
+   */
+  public void setDrawEllipse()
+  {   
+    my_ellipse = true;
+    my_rectangle = false;
+    my_line = false;
+    my_pencil = false;
+  }
+  
+  /**
+   * Draws the Grid on the panel.
+   * @param the_grid boolean value that sets the grid to draw or not.
+   */
+  public void setDrawGrid(final boolean the_grid)
+  {
+    my_grid = the_grid;
+    repaint();
+  }
+  
+  /**
+   * This sets the panel to a clear one.
+   */
+  public void setClear()
+  {
+    my_shape_list = new ArrayList<Shape>();
+    repaint();
+  }
+  
+  /**
+   * Listens for mouse clicks, to draw on our panel.
+   */
+  private class ActionMouseListener extends MouseAdapter
+  {
+    /**
+     * Handles a click event when mouse is pressed.
+     * 
+     * @param the_event The event.
+     */
+    public void mousePressed(final MouseEvent the_event)
+    {
+      my_old_x = the_event.getX();
+      my_old_y = the_event.getY();
+      repaint();
+    }
+    
+    /**
+     * Handles a click event when mouse is dragged.
+     * 
+     * @param the_event The event.
+     */
+    public void mouseDragged(final MouseEvent the_event)
+    {
+      my_current_x = the_event.getX();
+      my_current_y = the_event.getY();
+      repaint();
+    }
+    
+    /**
+     * Handles a click event when mouse is clicked.
+     * 
+     * @param the_event The event.
+     */
+    public void mouseReleased(final MouseEvent the_event)
+    {
+      if (my_pencil)
+      {
+        my_shape_list.add(new Shape(my_line_x2, my_line_y2, SHAPE_PENCIL, my_thickness,
+                                  my_color, my_line_x2, my_line_y2));
+      }
+      if (my_line)
+      {
+        my_shape_list.add(new Shape(my_line_x, my_line_y, SHAPE_LINE, my_thickness, 
+                                    my_color, my_line_x2, my_line_y2));
+      }
+      if (my_rectangle)
+      {
+        my_shape_list.add(new Shape(my_rectcirc_x, my_rectcirc_y, SHAPE_RECT, my_thickness, 
+                                    my_color, my_rectcirc_x2, my_rectcirc_y2));
+      }
+      if (my_ellipse)
+      {
+        my_shape_list.add(new Shape(my_rectcirc_x, my_rectcirc_y, SHAPE_OVAL, my_thickness,
+                                    my_color, my_rectcirc_x2, my_rectcirc_y2));
+      }
+      my_old_x = the_event.getX();
+      my_old_y = the_event.getY();
+      repaint();
+    }
+
+  } 
+
+}

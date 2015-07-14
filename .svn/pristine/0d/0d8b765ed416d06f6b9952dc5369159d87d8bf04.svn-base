@@ -1,0 +1,139 @@
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
+
+import javax.swing.JPanel;
+
+/*
+ *Alex Prokopchik
+ * May 11, 2013
+ *PaintPanel.java
+ */
+
+/**
+ * @author alexpro
+ * @version 1.0
+ */
+@SuppressWarnings("serial")
+public class PaintPanel extends JPanel 
+{
+  
+  /** The default size for this JPanel. */
+  private static final Dimension DEFUALT_SIZE = new Dimension(400, 300);
+  
+  /**
+   * The color to paint with.
+   */
+  private static final Color FOREGROUND_COLOR = Color.BLACK;
+  
+  /**
+   * The line width.
+   */
+  private static final int LINE_WIDTH = 1;
+  
+  /**
+   * The line that is drawn.
+   */
+  private Line2D my_line = new Line2D.Double();
+  
+  /**
+   * The x coord of the init. pos.
+   */
+  private int my_oldx;
+  
+  /**
+   * The y coord of the init. pos.
+   */
+  private int my_oldy;
+  
+  /**
+   * The x coord of the final pos.
+   */
+  private int my_currentx;
+  
+  /**
+   * The y coord of the final pos.
+   */
+  private int my_currenty;
+
+  /**
+   * Construct this JPanel.
+   */
+  public PaintPanel() 
+  {
+    super();
+    setPreferredSize(DEFUALT_SIZE);
+    setBackground(Color.WHITE);
+    addMouseListener(new PaintMouseListener());
+    addMouseMotionListener(new PaintMouseListener());
+  }
+  
+  /**
+   * Paints the current path.
+   * 
+   * @param the_graphics The graphics context to use for painting.
+   */
+  public void paintComponent(final Graphics the_graphics)
+  {
+    super.paintComponent(the_graphics);
+    final Graphics2D g2d = (Graphics2D) the_graphics;
+    
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2d.setPaint(FOREGROUND_COLOR);
+    g2d.setStroke(new BasicStroke(LINE_WIDTH));
+    g2d.draw(my_line);
+    repaint();
+  }
+  
+  /**
+   * Listens for mouse clicks, to draw on our panel.
+   */
+  private class PaintMouseListener extends MouseAdapter
+  {
+    /**
+     * Handles a click event when mouse is pressed.
+     * 
+     * @param the_event The event.
+     */
+    public void mousePressed(final MouseEvent the_event)
+    {
+      my_oldx = the_event.getX();
+      my_oldy = the_event.getY();
+      my_line = new Line2D.Double(my_oldx, my_oldy, my_oldx, my_oldy);
+    }
+    
+    /**
+     * Handles a click event when mouse is dragged.
+     * 
+     * @param the_event The event.
+     */
+    public void mouseDragged(final MouseEvent the_event)
+    {
+      my_currentx = the_event.getX();
+      my_currenty = the_event.getY();
+      my_line = new Line2D.Double(my_oldx, my_oldy, my_currentx, my_currenty);
+      repaint();
+    }
+    
+    /**
+     * Handles a click event when mouse is released.
+     * 
+     * @param the_event The event.
+     */
+    public void mouseClicked(final MouseEvent the_event)
+    {
+      my_oldx = the_event.getX();
+      my_oldy = the_event.getY();
+      my_line = new Line2D.Double(my_oldx, my_oldy, my_oldx, my_oldy);
+      repaint();
+    }
+
+  } 
+}
+

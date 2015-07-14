@@ -1,0 +1,58 @@
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JColorChooser;
+
+/*
+ *Alex Prokopchik
+ * May 11, 2013
+ *ColorAction.java
+ */
+
+/**
+ * @author alexpro
+ * @version 1.0
+ */
+@SuppressWarnings("serial")
+public class ColorAction extends AbstractAction 
+{
+
+  /** The JPanel to associate with this Action. */
+  private final PaintPanel my_panel;
+  
+  /** The Color to associate with this Action. */
+  private Color my_color;
+
+  /**
+   * Construct this Action.
+   * 
+   * @param the_panel a JPanel to associate with this Action.
+   */
+  public ColorAction(final PaintPanel the_panel, final Color the_color)
+  {
+    super("Color...");
+    my_panel = the_panel;
+    my_color = the_color;
+    my_color = Color.BLACK;
+    putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+    putValue(Action.SELECTED_KEY, false);
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void actionPerformed(final ActionEvent the_event) 
+  {
+    //ignore this for I started on part B
+//    Color result = null;
+//
+//    do
+//    {
+//      result = JColorChooser.showDialog(null, "A Color Chooser", my_color);
+//    }
+//    while (result == null);
+  }
+  
+}

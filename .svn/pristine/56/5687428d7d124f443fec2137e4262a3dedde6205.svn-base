@@ -1,0 +1,72 @@
+/*
+ *Alex Prokopchik
+ * May 11, 2013
+ *ColorAction.java
+ */
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JColorChooser;
+
+/**
+ * @author alexpro
+ * @version 1.0
+ */
+@SuppressWarnings("serial")
+public class ColorAction extends AbstractAction 
+{
+
+  /** The JPanel to associate with this Action. */
+  private final PaintPanel my_panel;
+  
+  /** The JPanel to associate with this Action. */
+  private final MenuBar my_menu;
+  
+  /** The JPanel to associate with this Action. */
+  private final ToolBar my_tool;
+  
+  /** The Color chosen from JColorChooser. */
+  private Color my_result;
+
+  /**
+   * Construct this Action.
+   * 
+   * @param the_panel a JPanel to associate with this Action.
+   * @param the_menu a JMenu to associate with this Action.
+   * @param the_tool a JToolBar to associate with this Action.
+   */
+  public ColorAction(final PaintPanel the_panel, 
+                     final MenuBar the_menu, final ToolBar the_tool)
+  {
+    super("Color...");
+    my_panel = the_panel;
+    my_menu = the_menu;
+    my_tool = the_tool;
+    putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+    putValue(Action.SELECTED_KEY, false);
+    my_result = Color.BLACK;
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void actionPerformed(final ActionEvent the_event) 
+  {
+    my_result = JColorChooser.showDialog(null, "A Color Chooser", Color.BLACK);
+    getColor();
+  }
+  
+  /**
+   * This method simply returns the color that was selected from the Color Chooser.
+   */
+  public void getColor()
+  {
+    my_panel.setColor(my_result);
+    my_menu.getColorButton().setBackground(my_result);
+    my_tool.getColorButton().setBackground(my_result);
+  }
+  
+}

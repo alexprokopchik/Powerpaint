@@ -1,0 +1,44 @@
+import javax.swing.Action;
+import javax.swing.ButtonGroup;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+
+/*
+ *Alex Prokopchik
+ * May 11, 2013
+ *ToolBar.java
+ */
+
+/**
+ * @author alexpro
+ * @version 1.0
+ */
+@SuppressWarnings("serial")
+public class ToolBar extends JToolBar 
+{
+
+  /** A button group for the mutually exclusive tool bar buttons. */
+  private final ButtonGroup my_group;
+
+  /**
+   * Construct the ToolBar.
+   */
+  public ToolBar() 
+  {
+    super();
+    my_group = new ButtonGroup();
+  }
+
+  /**
+   * Create a JToggleButton for the ToolBar.
+   * 
+   * @param the_action to associate with the created JToggleButton
+   */
+  public void createToggleButton(final Action the_action) 
+  {
+    final JToggleButton toggle_button = new JToggleButton(the_action);
+    my_group.add(toggle_button);
+    add(toggle_button);
+  }
+
+}

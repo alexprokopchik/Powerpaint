@@ -1,0 +1,214 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.Action;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
+
+/*
+ *Alex Prokopchik
+ * May 11, 2013
+ *MenuBar.java
+ */
+
+/**
+ * @author alexpro
+ * @version 1.0
+ */
+@SuppressWarnings("serial")
+public class MenuBar extends JMenuBar implements Observer 
+{
+  
+
+  /** The number of thickness buttons in my array. */
+  private static final int NUM_OF_THICK_BUTNS = 3;
+
+  /** The File menu. */
+  private final JMenu my_file_menu = new JMenu("File");
+  
+  /** The Options menu. */
+  private final JMenu my_options_menu = new JMenu("Options");
+  
+  /** The Tools menu. */
+  private final JMenu my_tools_menu = new JMenu("Tools");
+  
+  /** The Help menu. */
+  private final JMenu my_help_menu = new JMenu("Help");
+  
+  /** A button group for the Tools menu radio buttons. */
+  private final ButtonGroup my_group = new ButtonGroup();
+  
+  /** A button group for the Options menu radio buttons. */
+  private final ButtonGroup my_group1 = new ButtonGroup();
+  
+  /** A button to exit the program. */
+  private final JMenuItem my_exit_button = new JMenuItem("Exit");
+  
+  /** The Options menu grid check box. */
+  private final JCheckBox my_grid_button = new JCheckBox("Grid");
+  
+  /** The Options menu thickness radio buttons. */
+  private final JRadioButtonMenuItem[] my_thickness_buttons = 
+      new JRadioButtonMenuItem[NUM_OF_THICK_BUTNS];
+
+  /**
+   * Construct the menu bar.
+   * 
+   * @param the_frame the JFram which will contain this JMenuBar
+   */
+  public MenuBar(final JFrame the_frame) 
+  {
+    super();
+    
+    //setup all mnemonics
+    my_file_menu.setMnemonic(KeyEvent.VK_F);
+    my_options_menu.setMnemonic(KeyEvent.VK_O);
+    my_tools_menu.setMnemonic(KeyEvent.VK_T);
+    my_help_menu.setMnemonic(KeyEvent.VK_H);
+    my_exit_button.setMnemonic(KeyEvent.VK_X);
+    my_grid_button.setMnemonic(KeyEvent.VK_G);
+    
+    
+    // setup the Exit button
+    my_file_menu.add(my_exit_button);
+    my_file_menu.addSeparator();
+    my_exit_button.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent the_event) 
+      {
+        the_frame.dispose();
+      }
+    }); 
+    my_exit_button.setEnabled(true);
+    
+    //creates the clear button
+    createFileMenuButtonClear();
+    
+    //creates the about button
+    createHelpMenuButtonAbout();
+    
+    //adds the grid button in options menu
+    my_options_menu.add(my_grid_button);
+    
+    //creates the thickness button in options menu
+    createOptionsMenuButtonThickness();
+
+    //adds all of the menu bar items
+    add(my_file_menu);
+    add(my_options_menu);
+    add(my_tools_menu);
+    add(my_help_menu);
+  }
+  
+  /**
+   * This method creates the "Clear" button under the "File" menu
+   * and gives it an action listener to clear the Paint Panel.
+   */
+  private void createFileMenuButtonClear()
+  {
+    final JMenuItem clear_button = new JMenuItem("Clear");
+    my_file_menu.add(clear_button);
+    clear_button.setMnemonic(KeyEvent.VK_C);
+    clear_button.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent the_event) 
+      {
+        //Leave it here for part 1 only
+        clear_button.setEnabled(true);
+      }
+    }); 
+  }
+  
+  /**
+   * This method creates the "About..." button under the "Help" menu
+   * and gives it an action listener to show a GUI.
+   */
+  private void createHelpMenuButtonAbout()
+  {
+    final JMenuItem about_button = new JMenuItem("About...");
+    my_help_menu.add(about_button);
+    about_button.setMnemonic(KeyEvent.VK_A);
+    about_button.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent the_event) 
+      {
+        //Leave it here for part 1 only
+        about_button.setEnabled(true);
+      }
+    });
+    
+  }
+  
+  /**
+   * Creates a regular button menu item,
+   * associates an action with the button,
+   * adds the button to the Tools menu,
+   * adds a separator.
+   * 
+   * @param the_action the Action to associate with the new button being created
+   */
+  public void createToolMenuButtonColor(final Action the_action) 
+  {
+    final JMenuItem color_button = new JMenuItem(the_action);
+    my_tools_menu.add(color_button);
+    my_tools_menu.addSeparator();
+  }
+
+  /**
+   * Creates a radio button menu item,
+   * associates an action with the button,
+   * adds the button to a button group,
+   * adds the button to the Tools menu.
+   * 
+   * @param the_action the Action to associate with the new button being created
+   */
+  public void createToolMenuButton(final Action the_action) 
+  {
+    final JRadioButtonMenuItem created_button = new JRadioButtonMenuItem(the_action);
+    my_group.add(created_button);
+    my_tools_menu.add(created_button);
+  }
+  
+  /**
+   * Creates the thickness radio buttons (1, 2, and 4).
+   */
+  private void createOptionsMenuButtonThickness()
+  {
+    final JMenu thickness_button = new JMenu("Thickness");
+    my_options_menu.add(thickness_button);
+    thickness_button.setMnemonic(KeyEvent.VK_T);
+     
+    final String[] names = {"1", "2", "4"}; 
+    for (int i = 0; i < my_thickness_buttons.length; i++) 
+    {  
+      my_thickness_buttons[i] = new JRadioButtonMenuItem(names[i]); 
+      thickness_button.add(my_thickness_buttons[i]);
+      my_group1.add(my_thickness_buttons[i]);
+    } 
+    my_thickness_buttons[0].setSelected(true);
+    my_thickness_buttons[0].setMnemonic(KeyEvent.VK_1);
+    my_thickness_buttons[1].setMnemonic(KeyEvent.VK_2);
+    my_thickness_buttons[2].setMnemonic(KeyEvent.VK_4);
+
+  }
+  
+  // This class implements Observer
+
+  /**
+   * Enables or disables the Quit button.
+   * {@inheritDoc}
+   * @param the_arg enable the Quit button if true; otherwise disable the Quit button
+   */
+  @Override
+  public void update(final Observable the_observable, final Object the_arg) 
+  {
+    my_exit_button.setEnabled((Boolean) the_arg);
+  }
+
+}
+
